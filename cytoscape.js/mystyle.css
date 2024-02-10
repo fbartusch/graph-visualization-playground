@@ -4,7 +4,10 @@ h1 {
 }
 
 #cy {
-    width: 800px;
-    height: 800px;
-    display: block;
+    position: absolute;
+    left: 50px;
+    width: calc(100% - 100px);
+    height: calc(100% - 100px);
+    border: 1px solid black;
+    padding: 5px;
 }
