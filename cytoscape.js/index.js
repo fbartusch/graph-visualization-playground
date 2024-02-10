@@ -1,6 +1,5 @@
 /**
  * TODO
- * - Waspartof
  * - hadplan
  */
 
@@ -526,7 +525,7 @@ var cy = cytoscape({
         }
       },
       {
-        // ... Execution is associated with Agent
+        // QUANTIFICATION execution is associated with Agent
         data: {
           source: 'ex:33d96d2363e5acbf8e2f39f0bbc8a7df',
           target: 'exa:0000-0003-0711-5196',
@@ -534,15 +533,15 @@ var cy = cytoscape({
         }
       },
       {
-        // ...  execution has plan
+        // QUANTIFICATION execution has plan
         data: {
           source: 'ex:33d96d2363e5acbf8e2f39f0bbc8a7df',
-          target: 'ex:-378936176',
+          target: 'ex:1247472875',
           label : 'Had Plan'
         }
       },
       {
-        // ... Execution is associated with Agent
+        // FASTQC Execution is associated with Agent
         data: {
           source: 'ex:e5c2f82acf8ee54d6a26998f267db67f',
           target: 'exa:0000-0003-0711-5196',
@@ -550,15 +549,15 @@ var cy = cytoscape({
         }
       },
       {
-        // ...  execution has plan
+        // FASTQC  execution has plan
         data: {
           source: 'ex:e5c2f82acf8ee54d6a26998f267db67f',
-          target: 'ex:-378936176',
+          target: 'ex:-293564460',
           label : 'Had Plan'
         }
       },
       {
-        // ... Execution is associated with Agent
+        // MULTIQC Execution is associated with Agent
         data: {
           source: 'ex:fbbc22625b27e35efbec66b9fd2feba9',
           target: 'exa:0000-0003-0711-5196',
@@ -566,10 +565,10 @@ var cy = cytoscape({
         }
       },
       {
-        // ...  execution has plan
+        // MULTIQC  execution has plan
         data: {
           source: 'ex:fbbc22625b27e35efbec66b9fd2feba9',
-          target: 'ex:-378936176',
+          target: 'ex:-1107855909',
           label : 'Had Plan'
         }
       },
