@@ -1,8 +1,11 @@
 /**
- * TODO
- * - hadplan
+ * TODO:
+ * - create stylesheet for nodes
+ * - Reset higlight of clicked node using the stylesheet
+ * - more fine grained node types. The types can be used for building tooltips (different types -> different data)
+ * 
+ * - test compound nodes for grouping input/output files. Could make graph clearer
  */
-
 
 var cy = cytoscape({
     headless: false,
@@ -1153,18 +1156,99 @@ var cy = cytoscape({
   
   });
 
-// Events
+cy.center()
+cy.fit()
 
-// Tap example
-/*cy.on('tap', 'node', function(evt){
+// Set tooltip text for each node
+cy.nodes().forEach(setTooltip);
+
+
+/**
+ * 
+ * Event implementations
+ * 
+ */
+
+/**
+ * Mouseover
+ * 
+ * Show node data information during mouseover
+ */
+
+// Mouseover
+cy.on('mouseover', 'node', function(evt){
   var node = evt.target;
-  console.log( 'tapped ' + node.id() );
-});*/
+  node.scratch('_tooltip').show();
+});
 
-//TODO use cytoscape-popper with tippy.js for tooltips
-// https://github.com/cytoscape/cytoscape.js-popper
+// Mouseout
+cy.on('mouseout', 'node', function(evt){
+  var node = evt.target;
+  node.scratch('_tooltip').hide();
+});
 
-var makeTippy = function(ele, text){
+
+/**
+ * Mouse Click
+ * 
+ * Hide all other nodes not connected to this tapped node
+ */
+
+
+// Click
+cy.on('click', function(event) {
+
+  var evtTarget = event.target;
+
+  if (evtTarget == cy) {
+    console.log('click on background');
+    cy.nodes().style("opacity", 1.0);
+    cy.edges().style("opacity", 1.0);
+  }
+
+  else if (evtTarget.isNode()) {
+  
+    var node = evtTarget;
+    console.log( 'clicked ' + node.id() );
+  
+    // Neighbors of clicked node
+    var directlyConnected = node.neighborhood().merge(node);
+    console.log(directlyConnected);
+  
+    // Hide all nodes that are not in Neighborhood
+    var absComplement = directlyConnected.absoluteComplement();
+    console.log(absComplement)
+  
+    absComplement.style("opacity", 0.2);
+    directlyConnected.style("opacity", 1.0);
+
+    // Highlight the clicked node
+    node.style("border-width", "3px");
+    node.style("border-color", "red");
+  }
+
+  else if (evtTarget.isEdge) {
+
+  }  
+
+
+});
+
+/**
+ * Functions
+ */
+
+// Function that sets tipy tooltip for the element
+function setTooltip(ele) {
+  var tooltipText = buildTooltipText(ele);
+
+  // Add tippy tooltip to node data
+  var tippyTooltip = makeTippy(ele, tooltipText);
+  //tippyTooltip.hide();
+  ele.scratch('_tooltip', tippyTooltip);
+}
+
+function makeTippy(ele, text) {
   var ref = ele.popperRef();
 
   // Since tippy constructor requires DOM element/elements, create a placeholder
@@ -1196,24 +1280,32 @@ var makeTippy = function(ele, text){
   return tip;
 };
 
-var a = cy.getElementById('exa:0000-0003-0711-5196');
-//TODO Make Orcid clickable link
-var tooltipText = a.data('title') + " " + a.data('givenName') + " " + a.data('familyName') + "</br>ORCID: " + a.data('orcid') + "</br>Mail: " + a.data('mbox')
 
-var tippyA = makeTippy(a, tooltipText);
-tippyA.hide();
+// Function returns tooltip text (HTML) for nodes and edges
+function buildTooltipText(ele) {
 
-// Mouseover
-cy.on('mouseover', 'node[type="agent"]', function(evt){
-  var node = evt.target;
-  tippyA.show();
-});
+  var tooltipText = ""
+  var data = ele.data()
 
-// Mouseout
-cy.on('mouseout', 'node[type="agent"]', function(evt){
-  var node = evt.target;
-  tippyA.hide();
-});
+  if (ele.isEdge()) {
+  }
 
-cy.center()
-cy.fit()
+  if (ele.isNode()) {
+    var nodeType = data["type"]
+
+    if (nodeType == "agent") {
+      tooltipText = data['title'] + " " + data['givenName'] + " " + data['familyName'] + "</br>ORCID: " + data['orcid'] + "</br>Mail: " + data['mbox'];
+    }
+
+    if (nodeType == "activity") {
+      tooltipText = "ID: " + data['id'] + "</br>Start: " + data['startTime'] + "</br>endTime: " + data['endTime'];
+    }
+
+    if (nodeType == "entity") {
+      tooltipText = "ID: " + data['id'] + "</br>SHA-256: " + data['sha256'] + "</br>path: " + data['path'];
+
+    }
+  }
+
+  return tooltipText;
+}
